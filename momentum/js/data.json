@@ -1,35 +1,51 @@
 [
     {
-      "text": "Пишите код так, как будто сопровождать его будет склонный к насилию психопат, который знает, где вы живете",
-      "author": "Стив Макконнелл"
+      "be": {"text": "Пішыце код так, як быццам суправаджаць яго будзе схільны да гвалту псіхапат, які ведае, дзе вы жывяце",
+      "author": "Стыў Макаконэл"},
+      "en": {"text": "Write code as if it were accompanied by a violent psychopath who knows where you live",
+      "author": "Steve McConnell"}
     },
     {
-      "text": "Сложность программы растет до тех пор, пока не превысит способности программиста",
-      "author": "Артур Блох. Законы Мэрфи"
+      "be": {"text": "Складанасць праграмы расце да таго часу, пакуль не перавысіць здольнасці праграміста",
+      "author": "Артур Блох. Законы Мэрфі"},
+      "en": {"text": "The complexity of the program grows until it exceeds the ability of the programmer.",
+      "author": "Arthur Bloch. Murphy's laws"}
     },
-      {
-      "text": "Ходить по воде и разрабатывать программы, следуя ТЗ, очень просто… если они заморожены",
-      "author": "И. Берард"
+      {      
+      "be": {"text": "Хадзіць па вадзе і распрацоўваць праграмы, прытрымліваючыся ТЗ, вельмі проста… калі яны замарожаныя",
+      "author": "І. Берард"},
+      "en": {"text": "It's very easy to walk on water and develop programs according to the ToR... if they are frozen",
+      "author": "I. Berard"}
     },
-    {
-      "text": " Люди забудут, что ты говорил, забудут, что ты делал, но никогда не забудут, что ты заставил их почувствовать",
-      "author": "М. Энджелоу"
+    {      
+      "be": {"text": " Людзі забудуцца, што ты казаў, забудуцца, што ты рабіў, але ніколі не забудуцца, што ты прымусіў іх адчуць",
+      "author": "М. Энджэлаў"},
+      "en": {"text": " People will forget what you said, they will forget what you did, but they will never forget how you made them feel",
+      "author": "M. Angelou"}
     },
-    {
-      "text": "Наука — это организованные знания, мудрость — это организованная жизнь",
-      "author": "И. Кант"
+    {      
+      "be": {"text": "Навука - гэта арганізаваныя веды, мудрасць - гэта арганізаванае жыццё",
+      "author": "І. Кант"},
+      "en": {"text": "Science is organized knowledge, wisdom is organized life",
+      "author": "I. Kant"}
     },
-    {
-      "text": "Мы становимся тем, о чем мы думаем",
-      "author": "Э. Найтингейл"
+    {      
+      "be": {"text": "Мы становімся тым, пра што мы думаем",
+      "author": "Э. Найтынгейл"},
+      "en": {"text": "We become what we think",
+      "author": "E. Nightingale"}
     },
-    {
-      "text": "Быстрее всего учишься в трех случаях — до 7 лет, на тренингах, и когда жизнь загнала тебя в угол",
-      "author": "C. Кови"
+    {      
+      "be": {"text": "Хутчэй за ўсё вучышся ў трох выпадках – да 7 гадоў, на трэнінгах, і калі жыццё загнала цябе ў кут",
+      "author": "C. Кові"},
+      "en": {"text": "You learn the fastest in three cases - before the age of 7, at trainings, and when life has driven you into a corner",
+      "author": "C. Covey"}
     },
-    {
-      "text": "Главная проблема цитат в Интернете в том, что люди сразу верят в их подлинность",
-      "author": "В.И. Ленин"
+    {      
+      "be": {"text": "Галоўная праблема цытат у Інтэрнеце ў тым, што людзі адразу вераць у іх сапраўднасць",
+      "author": "У.І. Ленін"},
+      "en": {"text": "The main problem with quotes on the Internet is that people immediately believe in their authenticity",
+      "author": "V.I. Lenin"}
     }
 
   ]  

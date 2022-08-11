@@ -1,3 +1,18 @@
+let state = {
+    language: 'be',
+    photoSource: 'github',
+    blocks: ['quote', 'weather', 'player', 'todolist'],
+    toDo:[]
+}
+window.addEventListener('load', getLocalStorage);
+window.addEventListener('load', getSettings);
+window.addEventListener('beforeunload', ()=> {
+    state.toDo=[];
+    const input = document.querySelectorAll('.todoInput');
+    input.forEach(item =>state.toDo.push(item.value));
+})
+
+
 const randomNum = Math.ceil(Math.random()*20);
 let currentBgNumber = randomNum; //show the current background Image, can be changed by slider
 function addingZero(number){
@@ -21,47 +36,80 @@ function dayPeriod(){
     } else {
         return "evening"
     }
-}
+}   
 
 
 function setBG(number) {
-    const img = new Image();
-    const dp = dayPeriod();
-    const cn = addingZero(number);
-    img.src=`https://raw.githubusercontent.com/shish-ko/bgimages/assets/images/${dp}/${cn}.jpg`
-    img.onload = ()=> {
-        document.body.style.backgroundImage= "url('"+`${img.src}`+"')";
-    }    
+    if(state.photoSource === 'github'){
+        const img = new Image();
+        const dp = dayPeriod();
+        const cn = addingZero(number);
+        img.src=`https://raw.githubusercontent.com/shish-ko/bgimages/assets/images/${dp}/${cn}.jpg`
+        img.onload = ()=> {
+            document.body.style.backgroundImage= "url('"+`${img.src}`+"')";
+        }    
+    }      
 }
 
+async function getLinkToImage(){
+    if(state.photoSource === 'unsplash'){
+        const img = new Image();
+        const dp = dayPeriod();
+        let url = `https://api.unsplash.com/photos/random?orientation=landscape&query=${dp}&client_id=8-1C_5rqPu7IAQmtSwDTDNjuId3zb7az5Da9qP00wV4`;
+        console.log(url)
+        const res = await fetch (url);
+        const data= await res.json();    
+        img.src = data.urls.regular;
+        img.onload = ()=> {
+            document.body.style.backgroundImage= "url('"+`${img.src}`+"')";
+        }    
+    }  else if(state.photoSource==='flickr'){
+        const img = new Image();
+        const dp = dayPeriod();        
+        let url = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=7f186c5d957a329557c371dc86a52bd1&tags=${dp}&extras=url_l&format=json&nojsoncallback=1`;
+        console.log(url)
+        const res = await fetch (url);
+        const data = await res.json();    
+        img.src = data.photos.photo[currentBgNumber].url_l;
+        console.log(url)
+        img.onload = ()=> {
+            document.body.style.backgroundImage= "url('"+`${img.src}`+"')";
+        }    
+    }     
+}
+getLinkToImage();
 
 
 const date = document.querySelector('.date')
 function showDate() {
     const currentDate= new Date();
     const dateOptions= { weekday: 'long', month:'long', day: 'numeric',  }
-    date.textContent = currentDate.toLocaleDateString('be-BY', dateOptions);
+    date.textContent = currentDate.toLocaleString(state.language, dateOptions);
 }
 
 const greeting=document.querySelector('.greeting')
-function showGreeting() {
+function showGreeting(language) {
     const currentHour=new Date().getHours();
     if(currentHour >= 6 && currentHour <12){
-        greeting.textContent=`Добрай раніцы,`
+        greeting.textContent = greetingTranslation[language].morning;
     } else if(currentHour >= 12 && currentHour < 18){
-    greeting.textContent=`Добры дзень,`
+    greeting.textContent = greetingTranslation[language].day;
     }else if(currentHour >= 0 && currentHour < 6){
-        greeting.textContent =`Дабранач,`
+        greeting.textContent = greetingTranslation[language].night;
     } else {
-        greeting.textContent=`Добры вечар,`
+        greeting.textContent = greetingTranslation[language].evening;
     }
     
 }
-const name=document.querySelector('.name')
+const name=document.querySelector('.name');
+
+
 
 function setLocalStorage() {
     localStorage.setItem('name', name.value);
     localStorage.setItem('city', city.value);
+    localStorage.setItem('settings', JSON.stringify(state));
+    // localStorage.setItem('todo', JSON.stringify(arr));
 } 
 window.addEventListener('beforeunload', setLocalStorage);
 
@@ -70,21 +118,25 @@ function getLocalStorage() {
       name.value = localStorage.getItem('name');
     }
     if(localStorage.getItem('city')) {
-        city.value = localStorage.getItem('city');
-        
-      }
+        city.value = localStorage.getItem('city');        
+    }
+    if(localStorage.getItem('settings')){
+        state=JSON.parse(localStorage.getItem('settings')) ;
+    }
 }
-window.addEventListener('load', getLocalStorage);
+
 
 const time = document.querySelector('.time');
 
+
+// slides start
 
 const prevArrow=document.querySelector('.slide-prev');
 const nextArrow=document.querySelector('.slide-next');
 
 
 function getSlideNext(){
-    console.log('next');
+    getLinkToImage();
     if (currentBgNumber === 20){
         currentBgNumber=1        
     } else {
@@ -93,7 +145,7 @@ function getSlideNext(){
  
 }
 function getSlidePrev(){
-    console.log('prev');
+    getLinkToImage();
     if (currentBgNumber === 1){
         currentBgNumber=20        
     } else {
@@ -114,30 +166,32 @@ const weatherDescription = document.querySelector('.weather-description');
 const humidity = document.querySelector('.humidity');
 const wind = document.querySelector('.wind');
 let currentCity = localStorage.getItem('city'); // gets the city name from the localStorage
-
+console.log(currentCity)
 async function getWeather(cit) {
-    console.log(currentCity)
+    
     let url=''
     if (cit === '' || cit === null){
-        url = `https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=ru&appid=c0f99e466d41b59f58f45e13801966af&units=metric`
+        url = `https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=${state.language}&appid=c0f99e466d41b59f58f45e13801966af&units=metric`
     } else {
-        url = `https://api.openweathermap.org/data/2.5/weather?q=${cit}&lang=ru&appid=c0f99e466d41b59f58f45e13801966af&units=metric` 
+        url = `https://api.openweathermap.org/data/2.5/weather?q=${cit}&lang=${state.language}&appid=c0f99e466d41b59f58f45e13801966af&units=metric` 
     }
     const res = await fetch(url);
+   
     const data = await res.json();
     weatherIcon.className = 'weather-icon owf';
     weatherIcon.classList.add(`owf-${data.weather[0].id}`);
-    temperature.textContent = `${data.main.temp}` + '\u2103';
-    weatherDescription.textContent = `${data.weather[0].description}`;
-    wind.textContent = `Скорость ветра: ${data.wind.speed}м/с`;
-    humidity.textContent = `Относительная влажность: ${data.main.humidity} `;
+    temperature.textContent = Math.round(data.main.temp) + '\u2103';
+    weatherDescription.textContent = data.weather[0].description;
+    wind.textContent = `${greetingTranslation[state.language].windSpeed}${Math.round(data.wind.speed)}${greetingTranslation[state.language].ms}`;
+    humidity.textContent = `${greetingTranslation[state.language].humidity}${data.main.humidity}%`;
 }
-getWeather(currentCity);
+
 
  const city = document.querySelector('.city')
  
  city.addEventListener('change', ()=> {
     getWeather(city.value);
+    currentCity=city.value
  })
 
 // weather end
@@ -154,8 +208,8 @@ async function getQuotes(quoteNumber){
     const res = await fetch(url);    
     const data = await res.json();
     
-    quote.textContent = data[quoteNumber].text
-    author.textContent = data[quoteNumber].author
+    quote.textContent = data[quoteNumber][state.language].text
+    author.textContent = data[quoteNumber][state.language].author
  }
  getQuotes(currentQuote);
 
@@ -315,7 +369,9 @@ function colorTimeLine(){
 
 // volume
 const volumeControls=document.querySelector('.volumeControls');
-const volume=document.querySelector('.volume')
+const volumeIcon=document.querySelector('.volume-icon');
+const volume=document.querySelector('.volume');
+
 volumeControls.addEventListener('mouseenter', ()=>{
     volume.classList.add('visible');
 })
@@ -328,16 +384,26 @@ volumeLine.addEventListener('click', e=>{
     audio.volume = e.offsetX / parseInt(volumeBarWidth);
     colorVolume();   
 })
+
+let currentVolume='';
+volumeIcon.addEventListener('click', ()=>{
+    if (audio.volume !== 0){
+        currentVolume=audio.volume;
+        audio.volume=0 ;
+    }else {
+        audio.volume = currentVolume;
+    }
+    
+})
 const orangeVolume= document.querySelector('.volumeOrange');
 const volumeCircle=document.querySelector('.volumeCircle');
 function colorVolume(){
     const volumeBarWidth=window.getComputedStyle(volumeLine).width;
     const qwe = audio.volume * parseInt(volumeBarWidth);    
     orangeVolume.style.width=`${qwe}px`;    
-    volumeCircle.style.marginLeft= `${qwe}px`;   
-    console.log(volumeBarWidth) 
+    volumeCircle.style.marginLeft= `${qwe}px`;    
 }
-colorVolume()
+colorVolume();
 
 volumeLine.addEventListener('wheel', e=>{     //volume scroll
     if(e.deltaY > 0){
@@ -366,10 +432,151 @@ const playTime=document.querySelector('.playTime');
 const trackDuration=document.querySelector('.trackDuration');
 function countPlayTime(){
     const Duration=playList[currentTrack].duration
-    playTime.textContent= `${Math.trunc(timeLinePosition / 60)}:${addingZero(timeLinePosition % 60).slice(0, 2)}`
-    console.log(timeLinePosition)
+    playTime.textContent= `${Math.trunc(timeLinePosition / 60)}:${addingZero(timeLinePosition % 60).slice(0, 2)}`    
     trackDuration.textContent= `${Math.trunc(Duration / 60)}:${Duration % 60}`
 }
+
+
+// translation 
+const belarusian=document.querySelector('.belarusian');
+const english=document.querySelector('.english');
+
+belarusian.addEventListener('click', ()=>{
+    belarusian.classList.add('activeLang');
+    english.classList.remove('activeLang');
+    state.language='be';
+    getWeather(currentCity);
+    getQuotes(currentQuote);
+})
+english.addEventListener('click', ()=>{
+   english.classList.add('activeLang');
+   belarusian.classList.remove('activeLang');
+    state.language='en';
+    getWeather(currentCity);
+    getQuotes(currentQuote);
+})
+
+// settings
+
+const github= document.querySelector('.github');
+const flickr=document.querySelector('.flickr');
+const unsplash=document.querySelector('.unsplash');
+const playerSettings=document.querySelector('.playerSettings');
+const quoteSettings=document.querySelector('.quoteSettings');
+const weatherSettings=document.querySelector('.weatherSettings');
+const toDoSettings=document.querySelector('.toDoSettings')
+
+github.addEventListener('click', ()=> state.photoSource='github');
+flickr.addEventListener('click', ()=> {state.photoSource='flickr'; getLinkToImage();});
+unsplash.addEventListener('click', ()=> {state.photoSource='unsplash'; getLinkToImage();});
+
+const player=document.querySelector('.player');
+const weather= document.querySelector('.weather');
+
+playerSettings.addEventListener('click', ()=>{
+    playerSettings.classList.toggle('redBg');
+    player.classList.toggle('hideItem');
+    if (state.blocks.includes('player')){
+        const i = state.blocks.indexOf('player');
+        state.blocks.splice(i, 1);
+        console.log(state.blocks)
+        console.log(i)
+    }else{
+        state.blocks.push('player')
+    }
+})
+
+weatherSettings.addEventListener('click', ()=>{
+    weatherSettings.classList.toggle('redBg');
+    weather.classList.toggle('hideItem');
+    if (state.blocks.includes('weather')){
+        const i = state.blocks.indexOf('weather');
+        state.blocks.splice(i, 1);             
+    }else{
+        state.blocks.push('weather')
+    }
+})
+
+quoteSettings.addEventListener('click', ()=>{
+    quoteSettings.classList.toggle('redBg');
+    quote.classList.toggle('hideItem');
+    author.classList.toggle('hideItem');
+    if (state.blocks.includes('quote')){
+        const i = state.blocks.indexOf('quote');
+        state.blocks.splice(i, 1);
+    }else{
+        state.blocks.push('quote')
+    }
+})
+
+toDoSettings.addEventListener('click', ()=>{
+    toDoSettings.classList.toggle('redBg');
+    todoList.classList.toggle('todoListActive');
+    if (state.blocks.includes('todoList')){
+        const i = state.blocks.indexOf('todolist');
+        state.blocks.splice(i, 1);
+        console.log(state.blocks)
+        console.log(i)
+    }else{
+        state.blocks.push('todolist')
+    }
+})
+
+function getSettings(){
+    if(!state.blocks.includes('quote')){
+        quoteSettings.classList.toggle('redBg');
+        quote.classList.toggle('hideItem');
+        author.classList.toggle('hideItem');
+    }
+    if(!state.blocks.includes('player')){
+        playerSettings.classList.toggle('redBg');
+        player.classList.toggle('hideItem');      
+    }
+    if(!state.blocks.includes('weather')){
+        weatherSettings.classList.toggle('redBg');
+        weather.classList.toggle('hideItem');
+    }
+    if(state.language==='be'){
+        belarusian.classList.toggle('activeLang')
+    } else if(state.language==='en'){
+        english.classList.toggle('activeLang')
+    }
+    getWeather(currentCity);
+    getQuotes(currentQuote);
+}
+
+// todoList
+
+const addNoticeButton=document.querySelector('.addNotice');
+const todoList = document.querySelector('.todoList')
+addNoticeButton.addEventListener('click', addNotice);
+
+
+
+
+
+function addNotice(item){
+    if (item !==''){
+        if (typeof item ==='object'){
+                const div = document.createElement('div');
+                
+                div.innerHTML= `<input class="todoInput">`;
+                todoList.append(div);
+            } else {
+                const div = document.createElement('div');
+                
+                div.innerHTML= `<input class="todoInput" value="${item}">`;
+                todoList.append(div);        
+            } 
+    } else { 
+      null
+    }      
+} 
+
+window.addEventListener('load', ()=>{
+    state.toDo.forEach(item => addNotice(item));
+})
+
 
 
 
@@ -379,22 +586,19 @@ function showTime() {
     time.textContent = currentDate.toLocaleTimeString();
     setTimeout(showTime, 1000);
     showDate();
-    showGreeting();
+    showGreeting(state.language);
     setBG(currentBgNumber);
     if(isPlay === true){
-        timeLinePosition += 1
+        timeLinePosition += 1;
         countPlayTime();        
     }
 
-    colorTimeLine()
-    
-    
+    colorTimeLine();  
+    // console.log(state.toDo)  
 }
 showTime();
 
-
-
-
+import greetingTranslation from './greetingTranslation.js';
 
 
 
