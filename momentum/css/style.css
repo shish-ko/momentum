@@ -450,8 +450,18 @@ gap: 5px;
   transform: translateX(0);
 }
 
+.todoItem {
+  display: flex;
+  flex-direction: row;
+  gap: 7px  ;
+}
+
+.todoCheckBox {
+  display: block;
+}
 
 .todoInput {
+  display: block;
   border: none;
   border-bottom: rgb(0, 0, 0) 1px solid;
   width: 100%;
@@ -460,9 +470,11 @@ gap: 5px;
   background-color:  rgb(255, 224, 0);
 }
 
-.todoInput:focus{
-  transform: scale(1.05);
-  padding-left: 10px;
+.unvisible {
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s, visibility 0s 1s;
 }
 
 .addNotice {

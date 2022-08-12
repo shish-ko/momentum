@@ -109,7 +109,6 @@ function setLocalStorage() {
     localStorage.setItem('name', name.value);
     localStorage.setItem('city', city.value);
     localStorage.setItem('settings', JSON.stringify(state));
-    // localStorage.setItem('todo', JSON.stringify(arr));
 } 
 window.addEventListener('beforeunload', setLocalStorage);
 
@@ -168,26 +167,36 @@ const wind = document.querySelector('.wind');
 let currentCity = localStorage.getItem('city'); // gets the city name from the localStorage
 console.log(currentCity)
 async function getWeather(cit) {
-    
+    document.querySelector('.weather-error').textContent=null;
+
+
     let url=''
     if (cit === '' || cit === null){
         url = `https://api.openweathermap.org/data/2.5/weather?q=Минск&lang=${state.language}&appid=c0f99e466d41b59f58f45e13801966af&units=metric`
     } else {
         url = `https://api.openweathermap.org/data/2.5/weather?q=${cit}&lang=${state.language}&appid=c0f99e466d41b59f58f45e13801966af&units=metric` 
     }
-    const res = await fetch(url);
-   
-    const data = await res.json();
-    weatherIcon.className = 'weather-icon owf';
-    weatherIcon.classList.add(`owf-${data.weather[0].id}`);
-    temperature.textContent = Math.round(data.main.temp) + '\u2103';
-    weatherDescription.textContent = data.weather[0].description;
-    wind.textContent = `${greetingTranslation[state.language].windSpeed}${Math.round(data.wind.speed)}${greetingTranslation[state.language].ms}`;
-    humidity.textContent = `${greetingTranslation[state.language].humidity}${data.main.humidity}%`;
+    try{ 
+        const res = await fetch(url);
+        const data = await res.json();
+        weatherIcon.className = 'weather-icon owf';
+        weatherIcon.classList.add(`owf-${data.weather[0].id}`);
+        temperature.textContent = Math.round(data.main.temp) + '\u2103';
+        weatherDescription.textContent = data.weather[0].description;
+        wind.textContent = `${greetingTranslation[state.language].windSpeed}${Math.round(data.wind.speed)}${greetingTranslation[state.language].ms}`;
+        humidity.textContent = `${greetingTranslation[state.language].humidity}${data.main.humidity}%`;
+    } catch(error){ 
+        document.querySelector('.weather-error').textContent = greetingTranslation[state.language].err;        
+        temperature.textContent = null;
+        weatherDescription.textContent = null;
+        wind.textContent = null;
+        humidity.textContent =null; 
+    }
 }
 
 
- const city = document.querySelector('.city')
+
+const city = document.querySelector('.city')
  
  city.addEventListener('change', ()=> {
     getWeather(city.value);
@@ -551,35 +560,37 @@ const addNoticeButton=document.querySelector('.addNotice');
 const todoList = document.querySelector('.todoList')
 addNoticeButton.addEventListener('click', addNotice);
 
-
-
-
-
 function addNotice(item){
     if (item !==''){
         if (typeof item ==='object'){
                 const div = document.createElement('div');
-                
-                div.innerHTML= `<input class="todoInput">`;
+                div.classList.add('todoItem');
+                div.innerHTML= `<input type='checkbox' class='todoCheckBox'><input class="todoInput">`;
                 todoList.append(div);
             } else {
                 const div = document.createElement('div');
-                
-                div.innerHTML= `<input class="todoInput" value="${item}">`;
+                div.classList.add('todoItem');
+                div.innerHTML= `<input type='checkbox' class='todoCheckBox'><input class="todoInput" value="${item}">`;
                 todoList.append(div);        
             } 
     } else { 
       null
-    }      
+    }  
+    const checkButtons=document.querySelectorAll('.todoCheckBox');
+    const todoItem=document.querySelectorAll('.todoItem');
+    for(let i=0; i < checkButtons.length; i++){
+        checkButtons[i].addEventListener('click', ()=>{
+            todoItem[i].classList.add('unvisible');
+            function deleteTodoItem() {todoItem[i].remove()};            
+            setTimeout(deleteTodoItem, 1000);
+        })
+    }
+
 } 
 
 window.addEventListener('load', ()=>{
     state.toDo.forEach(item => addNotice(item));
 })
-
-
-
-
 
 function showTime() {
     const currentDate= new Date();
@@ -594,7 +605,6 @@ function showTime() {
     }
 
     colorTimeLine();  
-    // console.log(state.toDo)  
 }
 showTime();
 

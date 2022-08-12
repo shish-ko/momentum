@@ -7,6 +7,7 @@ const greetingTranslation ={
         windSpeed: 'Wind speed: ',
         ms: 'm/s',
         humidity: 'Humidity: ',
+        err: 'Error'
     },
     be:{
         morning: 'Добрай ранiцы, ',
@@ -16,6 +17,7 @@ const greetingTranslation ={
         windSpeed: 'Хуткасць паветра: ',
         ms: 'м/с',
         humidity: 'Вiльготнасць: ',
+        err: 'Памылка'
     }
     
 }
