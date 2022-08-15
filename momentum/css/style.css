@@ -513,6 +513,31 @@ gap: 5px;
   min-height: 20px;
 }
 
+.license {
+  align-self: flex-end;
+  display: flex;
+  align-items: flex-end;
+  background-color: #fff;
+  opacity: .2;
+  padding: 5px;
+  border-radius: 14px;
+}
+
+.rsschool {
+  width: 100px;
+}
+
+.githubLogo {
+  width: 40px;
+}
+
+.year {
+  margin: 0 10px;
+  color: #000;
+}
+
+
+
 @media (max-width: 768px) {
   .time {
     min-height: 80px;
@@ -542,5 +567,9 @@ gap: 5px;
   
   .slide-next {
     right: 0
+  }
+
+  .license{
+    display: none;
   }
 }
