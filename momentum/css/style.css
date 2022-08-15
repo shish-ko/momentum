@@ -470,7 +470,7 @@ gap: 5px;
   background-color:  rgb(255, 224, 0);
 }
 
-.unvisible {
+.invisible {
 
     opacity: 0;
     visibility: hidden;
@@ -531,5 +531,16 @@ gap: 5px;
   .name {
     font-size: 32px;
     padding: 5px;
+  }
+  .header { 
+    gap: 10px; 
+    padding: 20px 5px;
+  }
+  .slide-prev {
+    left: 5px;
+  }
+  
+  .slide-next {
+    right: 0
   }
 }

@@ -1,3 +1,4 @@
+console.log('реализовано изменение звука путем прокрутки scroll-wheel когда курсор находится над полосой уровня звука')
 let state = {
     language: 'be',
     photoSource: 'github',
@@ -55,8 +56,7 @@ async function getLinkToImage(){
     if(state.photoSource === 'unsplash'){
         const img = new Image();
         const dp = dayPeriod();
-        let url = `https://api.unsplash.com/photos/random?orientation=landscape&query=${dp}&client_id=8-1C_5rqPu7IAQmtSwDTDNjuId3zb7az5Da9qP00wV4`;
-        console.log(url)
+        let url = `https://api.unsplash.com/photos/random?orientation=landscape&query=${dp}&client_id=8-1C_5rqPu7IAQmtSwDTDNjuId3zb7az5Da9qP00wV4`;       
         const res = await fetch (url);
         const data= await res.json();    
         img.src = data.urls.regular;
@@ -66,12 +66,10 @@ async function getLinkToImage(){
     }  else if(state.photoSource==='flickr'){
         const img = new Image();
         const dp = dayPeriod();        
-        let url = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=7f186c5d957a329557c371dc86a52bd1&tags=${dp}&extras=url_l&format=json&nojsoncallback=1`;
-        console.log(url)
+        let url = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=7f186c5d957a329557c371dc86a52bd1&tags=${dp}&extras=url_l&format=json&nojsoncallback=1`;      
         const res = await fetch (url);
         const data = await res.json();    
-        img.src = data.photos.photo[currentBgNumber].url_l;
-        console.log(url)
+        img.src = data.photos.photo[currentBgNumber].url_l;  
         img.onload = ()=> {
             document.body.style.backgroundImage= "url('"+`${img.src}`+"')";
         }    
@@ -165,7 +163,7 @@ const weatherDescription = document.querySelector('.weather-description');
 const humidity = document.querySelector('.humidity');
 const wind = document.querySelector('.wind');
 let currentCity = localStorage.getItem('city'); // gets the city name from the localStorage
-console.log(currentCity)
+
 async function getWeather(cit) {
     document.querySelector('.weather-error').textContent=null;
 
@@ -229,7 +227,6 @@ function changeQuote(){
       changeQuote();  
     } else {
         currentQuote = newQuote;
-        console.log(currentQuote)
     }
     getQuotes(currentQuote);
 }
@@ -488,8 +485,6 @@ playerSettings.addEventListener('click', ()=>{
     if (state.blocks.includes('player')){
         const i = state.blocks.indexOf('player');
         state.blocks.splice(i, 1);
-        console.log(state.blocks)
-        console.log(i)
     }else{
         state.blocks.push('player')
     }
@@ -521,11 +516,9 @@ quoteSettings.addEventListener('click', ()=>{
 toDoSettings.addEventListener('click', ()=>{
     toDoSettings.classList.toggle('redBg');
     todoList.classList.toggle('todoListActive');
-    if (state.blocks.includes('todoList')){
+    if (state.blocks.includes('todolist')){
         const i = state.blocks.indexOf('todolist');
         state.blocks.splice(i, 1);
-        console.log(state.blocks)
-        console.log(i)
     }else{
         state.blocks.push('todolist')
     }
@@ -545,6 +538,10 @@ function getSettings(){
         weatherSettings.classList.toggle('redBg');
         weather.classList.toggle('hideItem');
     }
+    if(state.blocks.includes('todolist')){
+        toDoSettings.classList.toggle('redBg');
+        todoList.classList.toggle('todoListActive');
+    }
     if(state.language==='be'){
         belarusian.classList.toggle('activeLang')
     } else if(state.language==='en'){
@@ -563,29 +560,42 @@ addNoticeButton.addEventListener('click', addNotice);
 function addNotice(item){
     if (item !==''){
         if (typeof item ==='object'){
-                const div = document.createElement('div');
-                div.classList.add('todoItem');
-                div.innerHTML= `<input type='checkbox' class='todoCheckBox'><input class="todoInput">`;
-                todoList.append(div);
-            } else {
-                const div = document.createElement('div');
-                div.classList.add('todoItem');
-                div.innerHTML= `<input type='checkbox' class='todoCheckBox'><input class="todoInput" value="${item}">`;
-                todoList.append(div);        
-            } 
+            const div = document.createElement('div');
+            div.classList.add('todoItem');
+            const checked = document.createElement('input');
+            checked.type = 'checkbox';
+            checked.classList.add('todoCheckBox');                
+            const input=document.createElement('input');
+            input.classList.add('todoInput');
+            div.append(checked, input);
+            // div.innerHTML= `<input type='checkbox' class='todoCheckBox'><input class="todoInput">`; 
+            todoList.append(div);
+            checked.addEventListener('click', ()=>{
+                checked.parentElement.classList.add('invisible');
+                function deleteTodoItem() {checked.parentElement.remove()};            
+                setTimeout(deleteTodoItem, 1000);
+             })
+        } else {
+            const div = document.createElement('div');
+            div.classList.add('todoItem');
+            const checked = document.createElement('input');
+            checked.type = 'checkbox';
+            checked.classList.add('todoCheckBox');                
+            const input=document.createElement('input');
+            input.classList.add('todoInput');
+            input.value=item
+            div.append(checked, input);
+            // div.innerHTML= `<input type='checkbox' class='todoCheckBox'><input class="todoInput" value="${item}">`;
+            todoList.append(div);   
+            checked.addEventListener('click', ()=>{
+                checked.parentElement.classList.add('invisible');
+                function deleteTodoItem() {checked.parentElement.remove()};            
+                setTimeout(deleteTodoItem, 1000);
+            })     
+        } 
     } else { 
       null
     }  
-    const checkButtons=document.querySelectorAll('.todoCheckBox');
-    const todoItem=document.querySelectorAll('.todoItem');
-    for(let i=0; i < checkButtons.length; i++){
-        checkButtons[i].addEventListener('click', ()=>{
-            todoItem[i].classList.add('unvisible');
-            function deleteTodoItem() {todoItem[i].remove()};            
-            setTimeout(deleteTodoItem, 1000);
-        })
-    }
-
 } 
 
 window.addEventListener('load', ()=>{
@@ -594,7 +604,7 @@ window.addEventListener('load', ()=>{
 
 function showTime() {
     const currentDate= new Date();
-    time.textContent = currentDate.toLocaleTimeString();
+    time.textContent = currentDate.toLocaleTimeString('be', {hour12: false});
     setTimeout(showTime, 1000);
     showDate();
     showGreeting(state.language);
