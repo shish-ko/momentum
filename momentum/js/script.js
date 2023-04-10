@@ -45,7 +45,7 @@ function setBG(number) {
         const img = new Image();
         const dp = dayPeriod();
         const cn = addingZero(number);
-        img.src=`https://raw.githubusercontent.com/shish-ko/bgimages/assets/images/${dp}/${cn}.jpg`
+        img.src=`https://raw.githubusercontent.com/rolling-scopes-school/stage1-tasks/assets/images/${dp}/${cn}.jpg`
         img.onload = ()=> {
             document.body.style.backgroundImage= "url('"+`${img.src}`+"')";
         }    
@@ -166,7 +166,7 @@ let currentCity = localStorage.getItem('city'); // gets the city name from the l
 
 async function getWeather(cit) {
     document.querySelector('.weather-error').textContent=null;
-
+    city.placeholder=greetingTranslation[state.language].defaultCity
 
     let url=''
     if (cit === '' || cit === null){
@@ -267,7 +267,7 @@ audio.addEventListener('ended', ()=>{
 
 function playAudio(){
     audio.src = playList[currentTrack].src  
-
+    
     if(isPlay===false){
         audio.currentTime = timeLinePosition;
         audio.play();
@@ -276,7 +276,7 @@ function playAudio(){
         audio.pause();
         isPlay=false;
     }
-    
+   
 }
 function toggleBtn() {
     playButton.classList.toggle('pause');
